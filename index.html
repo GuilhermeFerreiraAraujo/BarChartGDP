@@ -97,11 +97,7 @@
                             .attr('opacity', 0)
 
                         d3.select(this)
-                            .transition()
-                            .duration(300)
-                            .attr('opacity', 0.6)
-                           
-                            .attr('width', '3px')
+                            .attr('opacity', 0)
 
                         const y = yScale(actual[1])
 
@@ -131,11 +127,7 @@
                             .attr('opacity', 1)
 
                         d3.select(this)
-                            .transition()
-                            .duration(300)
                             .attr('opacity', 1)
-                            
-                            .attr('width', '2px')
 
                         chart.selectAll('#limit').remove()
                         chart.selectAll('.label').remove()
