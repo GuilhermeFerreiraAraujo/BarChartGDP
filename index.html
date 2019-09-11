@@ -18,7 +18,6 @@
         <svg width="800px" height="600px" />
     </div>
 
-
     <script src="d3.min.js"></script>
 
     <script>
@@ -47,16 +46,11 @@
                 const chart = svg.append('g')
                     .attr('transform', `translate(${margin}, ${margin})`);
 
-                const xScale = d3.scaleBand()
-                    .range([0, width])
-                    .domain(data.map((s) => s[0]))
-                    .padding(0.1)
-
                 const years = data.map(x => new Date(x[0]));
 
-                const textXScale = d3.scaleTime()
-                    .domain([d3.min(years), d3.max(years)])
+                const xScale = d3.scaleTime()
                     .range([0, width])
+                    .domain([d3.min(years), d3.max(years)])
 
                 const yScale = d3.scaleLinear()
                     .range([height, 0])
@@ -68,7 +62,7 @@
                 chart.append('g')
                     .attr('id', 'x-axis')
                     .attr('transform', `translate(0, ${height})`)
-                    .call(d3.axisBottom(textXScale));
+                    .call(d3.axisBottom(xScale));
 
                 chart.append('g')
                     .attr('id', 'y-axis')
@@ -91,11 +85,13 @@
                     .attr('class', 'bar')
                     .attr('data-date', (x, i) => data[i][0])
                     .attr('data-gdp', (x, i) => data[i][1])
-                    .attr('x', (g) => xScale(g[0]))
+                    .attr('x', function(d, i) {
+                        return xScale(years[i]);
+                    })
                     .attr('y', (g) => yScale(g[1]))
                     .attr('height', (g) => height - yScale(g[1]))
-                    .attr('width', xScale.bandwidth())
-              
+                    .attr('width', '2px')
+
                     .on('mouseenter', function (actual, i) {
                         d3.selectAll('.value')
                             .attr('opacity', 0)
@@ -104,8 +100,8 @@
                             .transition()
                             .duration(300)
                             .attr('opacity', 0.6)
-                            .attr('x', (a) => xScale(a[0]) - 5)
-                            .attr('width', xScale.bandwidth() + 10)
+                           
+                            .attr('width', '3px')
 
                         const y = yScale(actual[1])
 
@@ -118,9 +114,10 @@
 
                         barGroups.append('text')
                             .attr('id', 'tooltip')
-
                             .attr('class', 'label')
-                            .attr('x', (a) => xScale(a[0]) + xScale.bandwidth() / 2)
+                            .attr('x', function(d, i) {
+                                return xScale(years[i]) - 5;
+                            })
                             .attr('y', (a) => yScale(a[1]) - 20)
                             .attr('color', 'white')
                             .attr('text-anchor', 'middle')
@@ -128,8 +125,6 @@
                                 return idx === i ? a[1] : '';
                             })
                             .attr('data-date', actual[0])
-
-
                     })
                     .on('mouseleave', function () {
                         d3.selectAll('.value')
@@ -139,8 +134,8 @@
                             .transition()
                             .duration(300)
                             .attr('opacity', 1)
-                            .attr('x', (a) => xScale(a[0]))
-                            .attr('width', xScale.bandwidth())
+                            
+                            .attr('width', '2px')
 
                         chart.selectAll('#limit').remove()
                         chart.selectAll('.label').remove()
@@ -168,9 +163,5 @@
 
     </script>
 
-    <script src="bundle.js"></script>
-    <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
-
 </body>
-
 </html>
